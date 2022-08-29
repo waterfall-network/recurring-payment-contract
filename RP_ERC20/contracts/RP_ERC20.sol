@@ -4,31 +4,13 @@ pragma solidity >=0.4.22 <0.9.0;
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/utils/Context.sol";
 
-contract R_ERC20 is Context, ERC20 {
+import "./IRP_ERC20.sol";
 
-    enum RegularPaymentInterval {Second, Minute, Hour, Day, Week, Month, Year}
+contract RP_ERC20 is Context, ERC20, IRP_ERC20 {
 
-    struct RegularPayment {
-        bytes32 id;
-        address from; // who pays
-        address to; // who get tokens
-        uint startTime; // date and time of the beginning of the calculation of regular payments
-        uint endTime; // date and time of the end of the calculation of regular payments
-        RegularPaymentInterval interval; // 1 a day, 1 a week, 1 a month, 1 a year
-        uint256 amount; // amount per interval
-        uint256 paidAmount; // how many tokens were spent. needed to calculate the balance of the holder.
-        bool isApprovedFrom; // Second user should approve regular payment
-        bool isApprovedTo; // Second user should approve regular payment
-        bool autoProlongation; // ignores endTime and the regular payment stops after calling the cancelRegularPayment function
-        address creator; // who created Regular Payment.
-    }
 
     mapping(bytes32 => RegularPayment) private _regularPayments;
     mapping(address => bytes32[]) private _regularUserPayments;
-
-    event CreatedRegularPayment(bytes32 id, address creator, address from, address to, uint startTime, uint endTime, RegularPaymentInterval interval, uint256 amount, bool autoProlongation);
-    event ApprovedRegularPayment(bytes32 id, address user);
-    event CanceledRegularPayment(bytes32 id, uint endTime, address user);
 
 
     modifier isExistRegularPayment(bytes32 id) {
@@ -258,7 +240,7 @@ contract R_ERC20 is Context, ERC20 {
         return (balance, profitAmount, debtsAmount);
     }
 
-    function balanceOf(address account) public view override returns (uint256) {
+    function balanceOf(address account) public view virtual override returns (uint256) {
         (uint256 balance, uint256 profitAmount, uint256 debtsAmount) = _balanceOf(account, true);
         return _calcBalance(balance, profitAmount, debtsAmount);
     }

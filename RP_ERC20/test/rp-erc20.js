@@ -1,22 +1,23 @@
-const R_ERC20 = artifacts.require("R_ERC20");
+const RP_ERC20 = artifacts.require("RP_ERC20");
+const IRP_ERC20 = artifacts.require("IRP_ERC20");
 
 const assert = require("chai").assert;
 const truffleAssert = require('truffle-assertions');
 
 const {toWei, BN} = web3.utils;
 
-contract("R_ERC20", async accounts => {
+contract("RP_ERC20", async accounts => {
     const [owner, user1, user2, user3, user4] = accounts;
 
     let contract = null;
-    const contractName = "R_ERC20";
-    const contractSymbol = "R_ERC20";
+    const contractName = "RP_ERC20";
+    const contractSymbol = "RP_ERC20";
     const contractTotalSupply = toWei("1", 'tether');
 
 
     beforeEach(async function () {
         if (!contract)
-            contract = await R_ERC20.new(contractName, contractSymbol, contractTotalSupply, owner);
+            contract = await RP_ERC20.new(contractName, contractSymbol, contractTotalSupply, owner);
         contract.defaultBlock = "pending";
     })
 
@@ -36,7 +37,7 @@ contract("R_ERC20", async accounts => {
             to: user2,
             startTime: Math.round(new Date().getTime() / 1000) + 60,
             endTime: Math.round(new Date().getTime() / 1000) + 120,
-            interval: R_ERC20.RegularPaymentInterval.Day,
+            interval: IRP_ERC20.RegularPaymentInterval.Day,
             amount: toWei('10'),
             autoProlongation: false,
         }
@@ -102,7 +103,7 @@ contract("R_ERC20", async accounts => {
             to: user2,
             startTime: Math.round(new Date().getTime() / 1000) + 60,
             endTime: Math.round(new Date().getTime() / 1000) + 120,
-            interval: R_ERC20.RegularPaymentInterval.Day,
+            interval: IRP_ERC20.RegularPaymentInterval.Day,
             amount: toWei('10'),
             autoProlongation: false,
         }
@@ -137,7 +138,7 @@ contract("R_ERC20", async accounts => {
             to: user1,
             startTime: Math.round(new Date().getTime() / 1000) + 60,
             endTime: Math.round(new Date().getTime() / 1000) + 120,
-            interval: R_ERC20.RegularPaymentInterval.Day,
+            interval: IRP_ERC20.RegularPaymentInterval.Day,
             amount: toWei('10'),
             autoProlongation: false,
         }
@@ -172,7 +173,7 @@ contract("R_ERC20", async accounts => {
             to: user2,
             startTime: Math.round(new Date().getTime() / 1000) + 60,
             endTime: Math.round(new Date().getTime() / 1000) + 120,
-            interval: R_ERC20.RegularPaymentInterval.Day,
+            interval: IRP_ERC20.RegularPaymentInterval.Day,
             amount: toWei('10'),
             autoProlongation: false,
         }
@@ -207,7 +208,7 @@ contract("R_ERC20", async accounts => {
             to: user2,
             startTime: Math.round(new Date().getTime() / 1000) + 60,
             endTime: Math.round(new Date().getTime() / 1000) + 120,
-            interval: R_ERC20.RegularPaymentInterval.Day,
+            interval: IRP_ERC20.RegularPaymentInterval.Day,
             amount: toWei('10'),
             autoProlongation: false,
         }
@@ -246,7 +247,7 @@ contract("R_ERC20", async accounts => {
             to: user2,
             startTime: Math.round(new Date().getTime() / 1000) + 60,
             endTime: Math.round(new Date().getTime() / 1000) + 120,
-            interval: R_ERC20.RegularPaymentInterval.Day,
+            interval: IRP_ERC20.RegularPaymentInterval.Day,
             amount: toWei('10'),
             autoProlongation: false,
         }
@@ -286,7 +287,7 @@ contract("R_ERC20", async accounts => {
             to: user2,
             startTime: Math.round(new Date().getTime() / 1000) + 60,
             endTime: Math.round(new Date().getTime() / 1000) + 120,
-            interval: R_ERC20.RegularPaymentInterval.Day,
+            interval: IRP_ERC20.RegularPaymentInterval.Day,
             amount: toWei('10'),
             autoProlongation: false,
         }
@@ -337,7 +338,7 @@ contract("R_ERC20", async accounts => {
             to: user2,
             startTime: Math.round(new Date().getTime() / 1000) + 60,
             endTime: Math.round(new Date().getTime() / 1000) + 120,
-            interval: R_ERC20.RegularPaymentInterval.Day,
+            interval: IRP_ERC20.RegularPaymentInterval.Day,
             amount: toWei('10'),
             autoProlongation: false,
         }
@@ -366,7 +367,7 @@ contract("R_ERC20", async accounts => {
             to: user4,
             startTime: Math.round(new Date().getTime() / 1000) + 10,
             endTime: Math.round(new Date().getTime() / 1000) + 120,
-            interval: R_ERC20.RegularPaymentInterval.Minute,
+            interval: IRP_ERC20.RegularPaymentInterval.Minute,
             amount: toWei('5'),
             autoProlongation: false,
         }
@@ -375,7 +376,7 @@ contract("R_ERC20", async accounts => {
             to: user3,
             startTime: Math.round(new Date().getTime() / 1000) + 10,
             endTime: Math.round(new Date().getTime() / 1000) + 120,
-            interval: R_ERC20.RegularPaymentInterval.Minute,
+            interval: IRP_ERC20.RegularPaymentInterval.Minute,
             amount: toWei('10'),
             autoProlongation: false,
         }
@@ -432,7 +433,7 @@ contract("R_ERC20", async accounts => {
     })
 
     it('Check Regular Payments by user', async function () {
-        contract = await R_ERC20.new(contractName, contractSymbol, contractTotalSupply, owner);
+        contract = await RP_ERC20.new(contractName, contractSymbol, contractTotalSupply, owner);
         contract.defaultBlock = "pending";
 
 
@@ -441,7 +442,7 @@ contract("R_ERC20", async accounts => {
             to: user4,
             startTime: Math.round(new Date().getTime() / 1000) + 10,
             endTime: Math.round(new Date().getTime() / 1000) + 120,
-            interval: R_ERC20.RegularPaymentInterval.Minute,
+            interval: IRP_ERC20.RegularPaymentInterval.Minute,
             amount: toWei('5'),
             autoProlongation: false,
         }
@@ -450,7 +451,7 @@ contract("R_ERC20", async accounts => {
             to: user3,
             startTime: Math.round(new Date().getTime() / 1000) + 10,
             endTime: Math.round(new Date().getTime() / 1000) + 120,
-            interval: R_ERC20.RegularPaymentInterval.Minute,
+            interval: IRP_ERC20.RegularPaymentInterval.Minute,
             amount: toWei('10'),
             autoProlongation: false,
         }
