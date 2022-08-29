@@ -264,10 +264,44 @@ contract R_ERC20 is Context, ERC20 {
     }
 
 
+    function _transferRegularPayments(address from, address to, uint256 amount) internal virtual {
+
+        RegularPayment[] memory userRegularPayments = _getActiveRegularPaymentsByUser(from);
+
+        for (uint i = 0; i < userRegularPayments.length; ++i) {
+            uint256 regularPaymentAmount = _getRegularPaymentAmount(userRegularPayments[i]);
+            if (userRegularPayments[i].to == from) {
+                (uint256 amountFrom, uint256 profitAmountFrom, uint256 debtsAmountFrom) = _balanceOf(userRegularPayments[i].from, false);
+                if (amountFrom + profitAmountFrom < debtsAmountFrom) {
+                    continue;
+                }
+                super._transfer(userRegularPayments[i].from, userRegularPayments[i].to, regularPaymentAmount);
+                userRegularPayments[i].paidAmount += regularPaymentAmount;
+            } else if (userRegularPayments[i].from == from) {
+                super._transfer(userRegularPayments[i].from, userRegularPayments[i].to, regularPaymentAmount);
+                userRegularPayments[i].paidAmount += regularPaymentAmount;
+            }
+        }
+
+        super._transfer(from, to, amount);
+    }
+
+
+    function transferFrom(
+        address from,
+        address to,
+        uint256 amount
+    ) public virtual override returns (bool) {
+        address spender = _msgSender();
+        super._spendAllowance(from, spender, amount);
+        _transferRegularPayments(from, to, amount);
+        return true;
+    }
+
     function transfer(address to, uint256 amount) public virtual override returns (bool) {
         address owner = _msgSender();
-        require(balanceOf(owner) >= amount, "R_ERC20: transfer amount exceeds balance");
-        return super.transfer(to, amount);
+        _transferRegularPayments(owner, to, amount);
+        return true;
     }
 
     function checkRegularPaymentsByUser(address user) external view returns (RegularPayment[] memory) {
