@@ -430,4 +430,101 @@ contract("R_ERC20", async accounts => {
         assert.equal(user2BalanceAfter.toString(), result2Balance.toString());
 
     })
+
+    it('Check Regular Payments by user', async function () {
+        contract = await R_ERC20.new(contractName, contractSymbol, contractTotalSupply, owner);
+        contract.defaultBlock = "pending";
+
+
+        const payment1 = {
+            from: user3,
+            to: user4,
+            startTime: Math.round(new Date().getTime() / 1000) + 10,
+            endTime: Math.round(new Date().getTime() / 1000) + 120,
+            interval: R_ERC20.RegularPaymentInterval.Minute,
+            amount: toWei('5'),
+            autoProlongation: false,
+        }
+        const payment2 = {
+            from: user4,
+            to: user3,
+            startTime: Math.round(new Date().getTime() / 1000) + 10,
+            endTime: Math.round(new Date().getTime() / 1000) + 120,
+            interval: R_ERC20.RegularPaymentInterval.Minute,
+            amount: toWei('10'),
+            autoProlongation: false,
+        }
+
+        const res1 = await contract.createRegularPayment(payment1.from, payment1.to, payment1.startTime, payment1.endTime, payment1.interval, payment1.amount, payment1.autoProlongation, {from: user3});
+        const paymentId = await new Promise((resolve) => {
+            truffleAssert.eventEmitted(res1, 'CreatedRegularPayment', async (ev) => {
+                resolve(ev.id)
+                return true;
+            });
+        })
+        await contract.approveRegularPayment(paymentId, {from: user4});
+
+
+        const res2 = await contract.createRegularPayment(payment2.from, payment2.to, payment2.startTime, payment2.endTime, payment2.interval, payment2.amount, payment2.autoProlongation, {from: user3});
+        const paymentId2 = await new Promise((resolve) => {
+            truffleAssert.eventEmitted(res2, 'CreatedRegularPayment', async (ev) => {
+                resolve(ev.id)
+                return true;
+            });
+        })
+
+        await contract.approveRegularPayment(paymentId2, {from: user4});
+
+        const user1BalanceBefore = await contract.balanceOf(user3);
+        assert.equal(user1BalanceBefore.toString(), '0');
+
+        const user2BalanceBefore = await contract.balanceOf(user4);
+
+        assert.equal(user2BalanceBefore.toString(), '0');
+
+        await new Promise(resolve => {
+            setTimeout(resolve, 20000)
+        })
+        await contract.transfer(owner, "1", {from: owner})
+
+        const user1BalanceAfter = await contract.balanceOf(user3);
+        assert.equal(user1BalanceAfter.toString(), '0');
+
+        const user2BalanceAfter = await contract.balanceOf(user4);
+
+        assert.equal(user2BalanceAfter.toString(), '0');
+
+        const user1Payments = await contract.checkRegularPaymentsByUser(user3);
+        assert.equal(user1Payments[0].amount.toString(), payment1.amount.toString());
+
+        const user2Payments = await contract.checkRegularPaymentsByUser(user4);
+        assert.equal(user2Payments[0].amount.toString(), payment2.amount.toString());
+
+        await contract.transfer(user3, payment1.amount, {from: owner})
+
+        const user1BalanceAfterTransfer = await contract.balanceOf(user3);
+
+        assert.equal(user1BalanceAfterTransfer.toString(), '0');
+
+        const user1PaymentsAfterTransfer = await contract.checkRegularPaymentsByUser(user3);
+
+        assert.equal(user1PaymentsAfterTransfer.length, 0);
+
+        const user2PaymentsAfterTransfer = await contract.checkRegularPaymentsByUser(user4);
+        assert.equal(user2PaymentsAfterTransfer.length, 1);
+
+        await contract.transfer(user4, payment2.amount, {from: owner})
+
+        const user2BalanceAfterTransfer = await contract.balanceOf(user4);
+
+        assert.equal(user2BalanceAfterTransfer.toString(), payment1.amount);
+
+        const user2PaymentsAfterTransfer2 = await contract.checkRegularPaymentsByUser(user4);
+        assert.equal(user2PaymentsAfterTransfer2.length, 0);
+
+
+
+    })
+
+
 })
