@@ -73,7 +73,7 @@ module.exports = {
       timeoutBlocks: 200,
       skipDryRun: true
     },
-    waterfall2: {
+    waterfall: {
       from: 'a7e558cc6efa1c41270ef4aa227b3dd6b4a3951e',
       provider: () => new HDWalletProvider({
         privateKeys: [testnetPrivateKey],
