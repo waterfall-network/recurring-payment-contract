@@ -14,15 +14,15 @@ contract RP_ERC20 is Context, ERC20, IRP_ERC20 {
 
 
     modifier isExistRegularPayment(bytes32 id) {
-        require(_regularPayments[id].amount > 0, "R_ERC20: Regular payment not found");
+        require(_regularPayments[id].amount > 0, "RP_ERC20: Regular payment not found");
         _;
     }
     modifier isMyRegularPayment(bytes32 id) {
-        require(_msgSender() == _regularPayments[id].from || _msgSender() == _regularPayments[id].to, "R_ERC20: Regular payment isn't for you");
+        require(_msgSender() == _regularPayments[id].from || _msgSender() == _regularPayments[id].to, "RP_ERC20: Regular payment isn't for you");
         _;
     }
     modifier isActiveRegularPayment(bytes32 id) {
-        require(_regularPayments[id].endTime > block.timestamp, "R_ERC20: Regular payment isn't active");
+        require(_regularPayments[id].endTime > block.timestamp, "RP_ERC20: Regular payment isn't active");
         _;
     }
 
@@ -39,12 +39,12 @@ contract RP_ERC20 is Context, ERC20, IRP_ERC20 {
     function createRegularPayment(address from, address to, uint startTime, uint endTime, RegularPaymentInterval interval, uint256 amount, bool autoProlongation) public virtual returns (bytes32 id){
         address creator = _msgSender();
 
-        require(from != address(0), "R_ERC20: from address is zero");
-        require(to != address(0), "R_ERC20: to address is zero");
-        require(startTime < endTime, "R_ERC20: start time is later than end time");
-        require(startTime > block.timestamp, "R_ERC20: current date is later than start time");
-        require(endTime > block.timestamp, "R_ERC20: current date is later than end time");
-        require(amount > 0, "R_ERC20: amount is zero");
+        require(from != address(0), "RP_ERC20: from address is zero");
+        require(to != address(0), "RP_ERC20: to address is zero");
+        require(startTime < endTime, "RP_ERC20: start time is later than end time");
+        require(startTime > block.timestamp, "RP_ERC20: current date is later than start time");
+        require(endTime > block.timestamp, "RP_ERC20: current date is later than end time");
+        require(amount > 0, "RP_ERC20: amount is zero");
 
 
         bytes32 _id = sha256(abi.encodePacked(creator, from, to, startTime, endTime, interval, amount, autoProlongation));
@@ -84,10 +84,10 @@ contract RP_ERC20 is Context, ERC20, IRP_ERC20 {
         RegularPayment storage _payment = _regularPayments[id];
 
         if (_msgSender() == _payment.from) {
-            require(_msgSender() == _payment.from && _payment.isApprovedFrom == false, "R_ERC20: Regular payment was approved by you1");
+            require(_msgSender() == _payment.from && _payment.isApprovedFrom == false, "RP_ERC20: Regular payment was approved by you");
             _payment.isApprovedFrom = true;
         } else if (_msgSender() == _payment.to) {
-            require(_msgSender() == _payment.to && _payment.isApprovedTo == false, "R_ERC20: Regular payment was approved by you2");
+            require(_msgSender() == _payment.to && _payment.isApprovedTo == false, "RP_ERC20: Regular payment was approved by you");
             _payment.isApprovedTo = true;
         }
 
@@ -98,6 +98,8 @@ contract RP_ERC20 is Context, ERC20, IRP_ERC20 {
     }
 
     function cancelRegularPayment(bytes32 id, uint endTime) isExistRegularPayment(id) isActiveRegularPayment(id) isMyRegularPayment(id) public virtual returns (bool success){
+        require(endTime == 0 || endTime > block.timestamp, "RP_ERC20: End Time Regular Payment must be zero or more then now");
+
         RegularPayment storage _payment = _regularPayments[id];
 
         uint _endTime = block.timestamp;
@@ -115,7 +117,7 @@ contract RP_ERC20 is Context, ERC20, IRP_ERC20 {
     }
 
     function getRegularPaymentsByUser(address user) external view returns (RegularPayment[] memory) {
-        require(user != address(0), "R_ERC20: user address is zero");
+        require(user != address(0), "RP_ERC20: user address is zero");
         return _getRegularPaymentsByUser(user);
     }
 
@@ -124,7 +126,7 @@ contract RP_ERC20 is Context, ERC20, IRP_ERC20 {
     }
 
     function getActiveRegularPaymentsByUser(address user) external view returns (RegularPayment[] memory) {
-        require(user != address(0), "R_ERC20: user address is zero");
+        require(user != address(0), "RP_ERC20: user address is zero");
         return _getActiveRegularPaymentsByUser(user);
     }
 

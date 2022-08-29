@@ -22,40 +22,100 @@ interface IRP_ERC20 {
         address creator; // who created Regular Payment.
     }
 
-    // events
+    // Events
+    /**
+     * @dev Emitted when Regular Payment `id` is created by `creator`
+     *
+     */
     event CreatedRegularPayment(bytes32 id, address creator, address from, address to, uint startTime, uint endTime, RegularPaymentInterval interval, uint256 amount, bool autoProlongation);
+
+    /**
+     * @dev Emitted when the Regular Payment `id` is approved by `user`
+     */
     event ApprovedRegularPayment(bytes32 id, address user);
+
+    /**
+     * @dev Emitted when the Regular Payment `id` is planed to cancel by `user` in `endTime`
+     */
     event CanceledRegularPayment(bytes32 id, uint endTime, address user);
 
 
-
     // Regular Payment functions
+
+    /**
+     * @dev Create Regular Payment  by `msg.sender`
+     *
+     * Returns Regular Payment `id` indicating whether the operation succeeded.
+     *
+     *
+     * Emits an {CreatedRegularPayment} event.
+     */
     function createRegularPayment(address from, address to, uint startTime, uint endTime, RegularPaymentInterval interval, uint256 amount, bool autoProlongation) external returns (bytes32 id);
 
+    /**
+     * @dev Approve Regular Payment `id` by `msg.sender`
+     *
+     * Returns a boolean value indicating whether the operation succeeded.
+     *
+     *
+     * Emits an {ApprovedRegularPayment} event.
+     */
     function approveRegularPayment(bytes32 id) external returns (bool success);
 
+    /**
+     * @dev Cancel Regular Payment `id` by `msg.sender`.
+     * `endTime` is last date when Regular Payment will be work.
+     * `endTime` may be zero in which case  `endTime` will be now.
+     *
+     * Returns a boolean value indicating whether the operation succeeded.
+     *
+     *
+     * Emits an {CanceledRegularPayment} event.
+     */
     function cancelRegularPayment(bytes32 id, uint endTime) external returns (bool success);
 
     // getters functions
+
+    /**
+     * @dev Returns all unpaid Regular Payments by `user`.
+     */
     function checkRegularPaymentsByUser(address user) external view returns (RegularPayment[] memory);
 
+    /**
+     * @dev Returns the Regular Payments by `id`.
+     */
     function getRegularPayment(bytes32 id) external view returns (RegularPayment memory);
 
+    /**
+     * @dev Returns all Regular Payments by `msg.sender`.
+     */
     function getMyRegularPayments() external view returns (RegularPayment[] memory);
 
+    /**
+     * @dev Returns all Regular Payments by `user`.
+     */
     function getRegularPaymentsByUser(address user) external view returns (RegularPayment[] memory);
 
+    /**
+     * @dev Returns all Active Regular Payments by `user`.
+     */
     function getMyActiveRegularPayments() external view returns (RegularPayment[] memory);
 
+    /**
+     * @dev Returns all Active Regular Payments by `msg.sender`.
+     */
     function getActiveRegularPaymentsByUser(address user) external view returns (RegularPayment[] memory);
 
+    /**
+     * @dev Returns the unpaid amount of Regular Payment  by `id`.
+     */
     function getRegularPaymentAmount(bytes32 id) external view returns (uint256);
 
-//    // Override ERC-20 functions
-//    function balanceOf(address account) external view returns (uint256);
-//
-//    function transferFrom(address from, address to, uint256 amount) external returns (bool);
-//
-//    function transfer(address to, uint256 amount) external returns (bool);
+    //    // Override ERC-20 functions
+    //    function balanceOf(address account) external view returns (uint256);
+    //
+    //    function transferFrom(address from, address to, uint256 amount) external returns (bool);
+    //
+    //    function transfer(address to, uint256 amount) external returns (bool);
 
 }
