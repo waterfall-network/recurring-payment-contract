@@ -8,7 +8,7 @@ interface IRP_ERC20 {
     enum RegularPaymentInterval {Second, Minute, Hour, Day, Week, Month, Year}
 
     struct RegularPayment {
-        bytes32 id;
+        uint256 id;
         address from; // who pays
         address to; // who get tokens
         uint startTime; // date and time of the beginning of the calculation of regular payments
@@ -27,17 +27,17 @@ interface IRP_ERC20 {
      * @dev Emitted when Regular Payment `id` is created by `creator`
      *
      */
-    event CreatedRegularPayment(bytes32 id, address creator, address from, address to, uint startTime, uint endTime, RegularPaymentInterval interval, uint256 amount, bool autoProlongation);
+    event CreatedRegularPayment(uint256 id, address creator, address from, address to, uint startTime, uint endTime, RegularPaymentInterval interval, uint256 amount, bool autoProlongation);
 
     /**
      * @dev Emitted when the Regular Payment `id` is approved by `user`
      */
-    event ApprovedRegularPayment(bytes32 id, address user);
+    event ApprovedRegularPayment(uint256 id, address user);
 
     /**
      * @dev Emitted when the Regular Payment `id` is planed to cancel by `user` in `endTime`
      */
-    event CanceledRegularPayment(bytes32 id, uint endTime, address user);
+    event CanceledRegularPayment(uint256 id, uint endTime, address user);
 
 
     // Regular Payment functions
@@ -50,7 +50,7 @@ interface IRP_ERC20 {
      *
      * Emits an {CreatedRegularPayment} event.
      */
-    function createRegularPayment(address from, address to, uint startTime, uint endTime, RegularPaymentInterval interval, uint256 amount, bool autoProlongation) external returns (bytes32 id);
+    function createRegularPayment(address from, address to, uint startTime, uint endTime, RegularPaymentInterval interval, uint256 amount, bool autoProlongation) external returns (uint256 id);
 
     /**
      * @dev Approve Regular Payment `id` by `msg.sender`
@@ -60,7 +60,7 @@ interface IRP_ERC20 {
      *
      * Emits an {ApprovedRegularPayment} event.
      */
-    function approveRegularPayment(bytes32 id) external returns (bool success);
+    function approveRegularPayment(uint256 id) external returns (bool success);
 
     /**
      * @dev Cancel Regular Payment `id` by `msg.sender`.
@@ -72,7 +72,7 @@ interface IRP_ERC20 {
      *
      * Emits an {CanceledRegularPayment} event.
      */
-    function cancelRegularPayment(bytes32 id, uint endTime) external returns (bool success);
+    function cancelRegularPayment(uint256 id, uint endTime) external returns (bool success);
 
     // getters functions
 
@@ -84,7 +84,7 @@ interface IRP_ERC20 {
     /**
      * @dev Returns the Regular Payments by `id`.
      */
-    function getRegularPayment(bytes32 id) external view returns (RegularPayment memory);
+    function getRegularPayment(uint256 id) external view returns (RegularPayment memory);
 
     /**
      * @dev Returns all Regular Payments by `msg.sender`.
@@ -109,7 +109,7 @@ interface IRP_ERC20 {
     /**
      * @dev Returns the unpaid amount of Regular Payment  by `id`.
      */
-    function getRegularPaymentAmount(bytes32 id) external view returns (uint256);
+    function getRegularPaymentAmount(uint256 id) external view returns (uint256);
 
     //    // Override ERC-20 functions
     //    function balanceOf(address account) external view returns (uint256);

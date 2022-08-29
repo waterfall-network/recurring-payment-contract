@@ -45,7 +45,7 @@ contract("RP_ERC20", async accounts => {
 
         const paymentId = await new Promise((resolve) => {
             truffleAssert.eventEmitted(res, 'CreatedRegularPayment', async (ev) => {
-                resolve(ev.id)
+                resolve(ev.id.toString())
                 return true;
             });
         })
@@ -111,7 +111,7 @@ contract("RP_ERC20", async accounts => {
 
         const paymentId = await new Promise((resolve) => {
             truffleAssert.eventEmitted(res, 'CreatedRegularPayment', async (ev) => {
-                resolve(ev.id)
+                resolve(ev.id.toString())
                 return true;
             });
         })
@@ -146,7 +146,7 @@ contract("RP_ERC20", async accounts => {
 
         const paymentId = await new Promise((resolve) => {
             truffleAssert.eventEmitted(res, 'CreatedRegularPayment', async (ev) => {
-                resolve(ev.id)
+                resolve(ev.id.toString())
                 return true;
             });
         })
@@ -181,7 +181,7 @@ contract("RP_ERC20", async accounts => {
 
         const paymentId = await new Promise((resolve) => {
             truffleAssert.eventEmitted(res, 'CreatedRegularPayment', async (ev) => {
-                resolve(ev.id)
+                resolve(ev.id.toString())
                 return true;
             });
         })
@@ -216,28 +216,23 @@ contract("RP_ERC20", async accounts => {
 
         const paymentId = await new Promise((resolve) => {
             truffleAssert.eventEmitted(res, 'CreatedRegularPayment', async (ev) => {
-                resolve(ev.id)
+                resolve(ev.id.toString())
                 return true;
             });
         })
-
         const paymentResult = await contract.getRegularPayment(paymentId);
         assert.equal(paymentResult.isApprovedTo, false);
-
         const myPaymentsResult = await contract.getMyRegularPayments({from: user2});
 
         const hasPayment = myPaymentsResult.findIndex(payment => payment.id === paymentId);
 
         assert.equal(hasPayment, -1);
-
         await contract.approveRegularPayment(paymentId, {from: user2});
 
         const paymentApproveResult = await contract.getRegularPayment(paymentId);
         assert.equal(paymentApproveResult.isApprovedTo, true);
-
         const myPaymentsResult2 = await contract.getMyRegularPayments({from: user2});
         const hasPayment2 = myPaymentsResult2.findIndex(payment => payment.id === paymentId);
-
         assert.isAbove(hasPayment2, -1);
 
     })
@@ -255,7 +250,7 @@ contract("RP_ERC20", async accounts => {
 
         const paymentId = await new Promise((resolve) => {
             truffleAssert.eventEmitted(res, 'CreatedRegularPayment', async (ev) => {
-                resolve(ev.id)
+                resolve(ev.id.toString())
                 return true;
             });
         })
@@ -295,7 +290,7 @@ contract("RP_ERC20", async accounts => {
 
         const paymentId = await new Promise((resolve) => {
             truffleAssert.eventEmitted(res, 'CreatedRegularPayment', async (ev) => {
-                resolve(ev.id)
+                resolve(ev.id.toString())
                 return true;
             });
         })
@@ -348,7 +343,7 @@ contract("RP_ERC20", async accounts => {
 
         const paymentId = await new Promise((resolve) => {
             truffleAssert.eventEmitted(res, 'CreatedRegularPayment', async (ev) => {
-                resolve(ev.id)
+                resolve(ev.id.toString())
                 return true;
             });
         })
@@ -395,7 +390,7 @@ contract("RP_ERC20", async accounts => {
         const res1 = await contract.createRegularPayment(payment1.from, payment1.to, payment1.startTime, payment1.endTime, payment1.interval, payment1.amount, payment1.autoProlongation, {from: user3});
         const paymentId = await new Promise((resolve) => {
             truffleAssert.eventEmitted(res1, 'CreatedRegularPayment', async (ev) => {
-                resolve(ev.id)
+                resolve(ev.id.toString())
                 return true;
             });
         })
@@ -405,7 +400,7 @@ contract("RP_ERC20", async accounts => {
         const res2 = await contract.createRegularPayment(payment2.from, payment2.to, payment2.startTime, payment2.endTime, payment2.interval, payment2.amount, payment2.autoProlongation, {from: user3});
         const paymentId2 = await new Promise((resolve) => {
             truffleAssert.eventEmitted(res2, 'CreatedRegularPayment', async (ev) => {
-                resolve(ev.id)
+                resolve(ev.id.toString())
                 return true;
             });
         })
@@ -459,7 +454,7 @@ contract("RP_ERC20", async accounts => {
         const res1 = await contract.createRegularPayment(payment1.from, payment1.to, payment1.startTime, payment1.endTime, payment1.interval, payment1.amount, payment1.autoProlongation, {from: user3});
         const paymentId = await new Promise((resolve) => {
             truffleAssert.eventEmitted(res1, 'CreatedRegularPayment', async (ev) => {
-                resolve(ev.id)
+                resolve(ev.id.toString())
                 return true;
             });
         })
@@ -469,7 +464,7 @@ contract("RP_ERC20", async accounts => {
         const res2 = await contract.createRegularPayment(payment2.from, payment2.to, payment2.startTime, payment2.endTime, payment2.interval, payment2.amount, payment2.autoProlongation, {from: user3});
         const paymentId2 = await new Promise((resolve) => {
             truffleAssert.eventEmitted(res2, 'CreatedRegularPayment', async (ev) => {
-                resolve(ev.id)
+                resolve(ev.id.toString())
                 return true;
             });
         })

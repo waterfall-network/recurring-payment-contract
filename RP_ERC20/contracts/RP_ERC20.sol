@@ -8,21 +8,22 @@ import "./IRP_ERC20.sol";
 
 contract RP_ERC20 is Context, ERC20, IRP_ERC20 {
 
+    uint256 private  _countRegularPayments = 0;
 
-    mapping(bytes32 => RegularPayment) private _regularPayments;
-    mapping(address => bytes32[]) private _regularUserPayments;
+    mapping(uint256 => RegularPayment) private _regularPayments;
+    mapping(address => uint256[]) private _regularUserPayments;
 
 
-    modifier isExistRegularPayment(bytes32 id) {
+    modifier isExistRegularPayment(uint256 id) {
         require(_regularPayments[id].amount > 0, "RP_ERC20: Regular payment not found");
         _;
     }
-    modifier isMyRegularPayment(bytes32 id) {
+    modifier isMyRegularPayment(uint256 id) {
         require(_msgSender() == _regularPayments[id].from || _msgSender() == _regularPayments[id].to, "RP_ERC20: Regular payment isn't for you");
         _;
     }
-    modifier isActiveRegularPayment(bytes32 id) {
-        require(_regularPayments[id].endTime > block.timestamp, "RP_ERC20: Regular payment isn't active");
+    modifier isActiveRegularPayment(uint256 id) {
+        require(_regularPayments[id].startTime < block.timestamp && _regularPayments[id].endTime > block.timestamp, "RP_ERC20: Regular payment isn't active");
         _;
     }
 
@@ -36,7 +37,7 @@ contract RP_ERC20 is Context, ERC20, IRP_ERC20 {
     }
 
 
-    function createRegularPayment(address from, address to, uint startTime, uint endTime, RegularPaymentInterval interval, uint256 amount, bool autoProlongation) public virtual returns (bytes32 id){
+    function createRegularPayment(address from, address to, uint startTime, uint endTime, RegularPaymentInterval interval, uint256 amount, bool autoProlongation) public virtual returns (uint256 id){
         address creator = _msgSender();
 
         require(from != address(0), "RP_ERC20: from address is zero");
@@ -47,7 +48,7 @@ contract RP_ERC20 is Context, ERC20, IRP_ERC20 {
         require(amount > 0, "RP_ERC20: amount is zero");
 
 
-        bytes32 _id = sha256(abi.encodePacked(creator, from, to, startTime, endTime, interval, amount, autoProlongation));
+        uint256 _id = _countRegularPayments;
 
         RegularPayment memory newRegularPayment = RegularPayment({
         id : _id,
@@ -72,15 +73,12 @@ contract RP_ERC20 is Context, ERC20, IRP_ERC20 {
             _regularUserPayments[creator].push(_id);
         }
 
+        _countRegularPayments++;
         emit CreatedRegularPayment(_id, creator, from, to, startTime, endTime, interval, amount, autoProlongation);
         return _id;
     }
 
-    function getRegularPayment(bytes32 id) isExistRegularPayment(id) external view returns (RegularPayment memory) {
-        return _regularPayments[id];
-    }
-
-    function approveRegularPayment(bytes32 id) isExistRegularPayment(id) isActiveRegularPayment(id) isMyRegularPayment(id) public virtual returns (bool success){
+    function approveRegularPayment(uint256 id) isExistRegularPayment(id) isMyRegularPayment(id) public virtual returns (bool success){
         RegularPayment storage _payment = _regularPayments[id];
 
         if (_msgSender() == _payment.from) {
@@ -97,7 +95,7 @@ contract RP_ERC20 is Context, ERC20, IRP_ERC20 {
         return true;
     }
 
-    function cancelRegularPayment(bytes32 id, uint endTime) isExistRegularPayment(id) isActiveRegularPayment(id) isMyRegularPayment(id) public virtual returns (bool success){
+    function cancelRegularPayment(uint256 id, uint endTime) isExistRegularPayment(id) isMyRegularPayment(id) public virtual returns (bool success){
         require(endTime == 0 || endTime > block.timestamp, "RP_ERC20: End Time Regular Payment must be zero or more then now");
 
         RegularPayment storage _payment = _regularPayments[id];
@@ -109,6 +107,11 @@ contract RP_ERC20 is Context, ERC20, IRP_ERC20 {
         _payment.endTime = _endTime;
         emit CanceledRegularPayment(id, _endTime, _msgSender());
         return true;
+    }
+
+
+    function getRegularPayment(uint256 id) isExistRegularPayment(id) external view returns (RegularPayment memory) {
+        return _regularPayments[id];
     }
 
 
@@ -130,9 +133,73 @@ contract RP_ERC20 is Context, ERC20, IRP_ERC20 {
         return _getActiveRegularPaymentsByUser(user);
     }
 
+    function getRegularPaymentAmount(uint256 id) isExistRegularPayment(id) external view returns (uint256) {
+        if (_isActiveRegularPayment(_regularPayments[id])) {
+            return _getRegularPaymentAmount(_regularPayments[id]);
+        }
+        return 0;
+    }
+
+    function checkRegularPaymentsByUser(address user) external view returns (RegularPayment[] memory) {
+        (uint256 balance, uint256 profitAmount, uint256 debtsAmount) = _balanceOf(user, true);
+        if (balance + profitAmount > debtsAmount)
+            return new RegularPayment[](0);
+
+        RegularPayment[] memory userRegularPayments = _getActiveRegularPaymentsByUser(user);
+
+        uint256 debtsAmount2 = 0;
+        uint length = 0;
+        for (uint i = 0; i < userRegularPayments.length; ++i) {
+            if (userRegularPayments[i].from == user) {
+                debtsAmount2 += _getRegularPaymentAmount(userRegularPayments[i]);
+                if (debtsAmount2 > balance + profitAmount) {
+                    length++;
+                }
+            }
+        }
+
+        RegularPayment[] memory userDebtsRegularPayments = new RegularPayment[](length);
+
+        uint256 debtsAmount3 = 0;
+        uint j = 0;
+        for (uint i = 0; i < userRegularPayments.length; ++i) {
+            if (userRegularPayments[i].from == user) {
+                debtsAmount3 += _getRegularPaymentAmount(userRegularPayments[i]);
+                if (debtsAmount3 > balance + profitAmount) {
+                    userDebtsRegularPayments[j] = userRegularPayments[i];
+                    length++;
+                }
+            }
+        }
+
+        return userDebtsRegularPayments;
+    }
+
+    function balanceOf(address account) public view virtual override returns (uint256) {
+        (uint256 balance, uint256 profitAmount, uint256 debtsAmount) = _balanceOf(account, true);
+        return _calcBalance(balance, profitAmount, debtsAmount);
+    }
+
+    function transferFrom(
+        address from,
+        address to,
+        uint256 amount
+    ) public virtual override returns (bool) {
+        address spender = _msgSender();
+        super._spendAllowance(from, spender, amount);
+        _transferRegularPayments(from, to, amount);
+        return true;
+    }
+
+    function transfer(address to, uint256 amount) public virtual override returns (bool) {
+        address owner = _msgSender();
+        _transferRegularPayments(owner, to, amount);
+        return true;
+    }
+
 
     function _getRegularPaymentsByUser(address user) internal view returns (RegularPayment[] memory) {
-        bytes32[] storage paymentsIds = _regularUserPayments[user];
+        uint256[] storage paymentsIds = _regularUserPayments[user];
         RegularPayment[] memory userRegularPayments = new RegularPayment[](paymentsIds.length);
 
         for (uint i = 0; i < paymentsIds.length; ++i) {
@@ -181,7 +248,7 @@ contract RP_ERC20 is Context, ERC20, IRP_ERC20 {
     }
 
     function _getActiveRegularPaymentsByUser(address user) internal view returns (RegularPayment[] memory) {
-        bytes32[] storage paymentsIds = _regularUserPayments[user];
+        uint256[] storage paymentsIds = _regularUserPayments[user];
 
         uint length = 0;
         for (uint i = 0; i < paymentsIds.length; ++i) {
@@ -202,13 +269,6 @@ contract RP_ERC20 is Context, ERC20, IRP_ERC20 {
         return userActiveRegularPayments;
     }
 
-
-    function getRegularPaymentAmount(bytes32 id) isExistRegularPayment(id) external view returns (uint256) {
-        if (_isActiveRegularPayment(_regularPayments[id])) {
-            return _getRegularPaymentAmount(_regularPayments[id]);
-        }
-        return 0;
-    }
 
     function _calcBalance(uint256 balance, uint256 profitAmount, uint256 debtsAmount) internal pure returns (uint256){
         return balance + profitAmount < debtsAmount ? 0 : balance + profitAmount - debtsAmount;
@@ -242,11 +302,6 @@ contract RP_ERC20 is Context, ERC20, IRP_ERC20 {
         return (balance, profitAmount, debtsAmount);
     }
 
-    function balanceOf(address account) public view virtual override returns (uint256) {
-        (uint256 balance, uint256 profitAmount, uint256 debtsAmount) = _balanceOf(account, true);
-        return _calcBalance(balance, profitAmount, debtsAmount);
-    }
-
 
     function _transferRegularPayments(address from, address to, uint256 amount) internal virtual {
 
@@ -270,57 +325,5 @@ contract RP_ERC20 is Context, ERC20, IRP_ERC20 {
         super._transfer(from, to, amount);
     }
 
-
-    function transferFrom(
-        address from,
-        address to,
-        uint256 amount
-    ) public virtual override returns (bool) {
-        address spender = _msgSender();
-        super._spendAllowance(from, spender, amount);
-        _transferRegularPayments(from, to, amount);
-        return true;
-    }
-
-    function transfer(address to, uint256 amount) public virtual override returns (bool) {
-        address owner = _msgSender();
-        _transferRegularPayments(owner, to, amount);
-        return true;
-    }
-
-    function checkRegularPaymentsByUser(address user) external view returns (RegularPayment[] memory) {
-        (uint256 balance, uint256 profitAmount, uint256 debtsAmount) = _balanceOf(user, true);
-        if (balance + profitAmount > debtsAmount)
-            return new RegularPayment[](0);
-
-        RegularPayment[] memory userRegularPayments = _getActiveRegularPaymentsByUser(user);
-
-        uint256 debtsAmount2 = 0;
-        uint length = 0;
-        for (uint i = 0; i < userRegularPayments.length; ++i) {
-            if (userRegularPayments[i].from == user) {
-                debtsAmount2 += _getRegularPaymentAmount(userRegularPayments[i]);
-                if (debtsAmount2 > balance + profitAmount) {
-                    length++;
-                }
-            }
-        }
-
-        RegularPayment[] memory userDebtsRegularPayments = new RegularPayment[](length);
-
-        uint256 debtsAmount3 = 0;
-        uint j = 0;
-        for (uint i = 0; i < userRegularPayments.length; ++i) {
-            if (userRegularPayments[i].from == user) {
-                debtsAmount3 += _getRegularPaymentAmount(userRegularPayments[i]);
-                if (debtsAmount3 > balance + profitAmount) {
-                    userDebtsRegularPayments[j] = userRegularPayments[i];
-                    length++;
-                }
-            }
-        }
-
-        return userDebtsRegularPayments;
-    }
 
 }
