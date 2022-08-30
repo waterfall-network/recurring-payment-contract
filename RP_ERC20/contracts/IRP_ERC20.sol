@@ -79,7 +79,7 @@ interface IRP_ERC20 {
     function checkRegularPaymentsByUser(address user) external view returns (RegularPayment[] memory);
 
     /**
-     * @dev Returns the Regular Payments by `id`.
+     * @dev Returns the Regular Payment by `id`.
      */
     function getRegularPayment(uint256 id) external view returns (RegularPayment memory);
 
