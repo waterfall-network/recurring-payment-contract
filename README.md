@@ -1,6 +1,6 @@
 ## Recurring Payment Contract
 
-This repository is part of the IEEE [Standard for the Recurring Transactions on Distributed Ledger Technologies (DLTs)](https://opensource.ieee.org/oscom/official-project-requests/-/issues/15) work materials.
+This repository is part of the IEEE [Standard for the Recurring Transactions on Distributed Ledger Technologies (DLTs)](https://standards.ieee.org/ieee/3228/11069/) work materials.
 
 ## Goal and Description
 
