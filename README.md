@@ -21,22 +21,22 @@ In the first stage, an algorithm for implementing the essential functions of reg
 ### STAGE I. Recurring payments and subscriptions
 
 1.  Formulating an idea based on the mission of the project and the direction of its development. General knowledge of the problem. Formulation of specific goals and objectives. (completed)
-2.  Studying related works. Critical analysis of existing solutions, standards, and review of scientific literature. (completed)
-3.  Payment Logic Design. General Concept, Balance and Transfer Types, Debt Processing, Wire Transfer, Clearing System. (completed)
+2.  Studying related works. Critical analysis of existing solutions, token standards, and review of scientific literature. (completed)
+3.  Effecting payments. General concept, priority queue, and deferred virtual transaction. Algorithms. (completed)
 4.  Creating a Smart Contract Prototype. The proposed payment and token accounting scheme have to be implemented as a smart contract running on the Ethereum network, or another system with a compatible virtual machine. (in progress)
-5.  Publication preparation. An abstract for the IEEE 1st GET Blockchain Forum, California, United States. (completed)
-6.  Prototype testing. Test the algorithm for commission costs; compare the results with commissions without this standard.
+5.  Publication preparation (2022). An abstract for the IEEE 1st GET Blockchain Forum, California, United States. (completed)
+6.  Publication preparation (2023). An abstract for IEEE 1st Ukrainian Distributed Ledger Technology Forum (UADLTF), Kyiv, Ukraine. (in progress)
+7.  Prototype testing. Test the algorithm for commission costs; compare the results with commissions without this standard. (in progress)
 
 ### Stage II. Recurring payments and subscriptions: Advanced Topics
 
-1.  Restricted Accrual Accounting. With the involvement of a consultant from the financial domain, we determine a list of the minimal elements of standard AA (accrual accounting)  that need to be implemented. Find ways to “cut out” the necessary functions from the complete system. Accrual of penalty on outstanding debts.
-2.  Fees may accrue on incurred debts. Study and specification of problems. 
+1.  Auxiliary features. With the involvement of a consultant from the financial domain, we determine a list of features that needs to be implemented. Find ways to “cut out” the necessary functions from the complete accounting system.
+2.  Penalties may accrue on incurred debts. Study and specification of problems. 
 3.  Freeze – suspension of subscription payments.
-4.  Another calculation algorithm (or modernization of the old one).
-5.  Netting of ring debts.
-6.  Interaction with other smart contracts.
-7.  The case of a change in the payment amount during the subscription period. The payment amount may change during the subscription period and such information could be stored outside the network. However, smart contracts cannot access external data on their own. To make this happen, special applications, so-called oracles, put the necessary information on the blockchain on a regular basis or by a smart contract request.
-8.  Creating a web application. Implement a web application to demonstrate a smart contract.
+4.  Netting of ring debts.
+5.  Interaction with other smart contracts.
+6.  The case of a change in the payment amount during the subscription period. The payment amount may change during the subscription period and such information could be stored outside the network. However, smart contracts cannot access external data on their own. To make this happen, special applications, so-called oracles, put the necessary information on the blockchain on a regular basis or by a smart contract request.
+7.  Creating a web application. Implement a web application to demonstrate a smart contract.
 
 ### Stage III. Accrual Accounting in DeFi
 
