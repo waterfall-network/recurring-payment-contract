@@ -30,15 +30,15 @@ In the first stage, an algorithm for implementing the essential functions of reg
 
 ### Stage II. Recurring payments and subscriptions: Advanced Topics
 
-1.  Auxiliary features. With the involvement of a consultant from the financial domain, we determine a list of features that needs to be implemented. Find ways to “cut out” the necessary functions from the complete accounting system.
+1.  Auxiliary features. With the involvement of a consultant from the financial domain, we determine a list of features that needs to be implemented. Find ways to “cut out” the necessary functions from the complete accounting system (e.g., chargeback).
 2.  Penalties may accrue on incurred debts. Study and specification of problems. 
 3.  Freeze – suspension of subscription payments.
-4.  Netting of ring debts.
+4.  Clearing system. Netting of ring debts.
 5.  Interaction with other smart contracts.
 6.  The case of a change in the payment amount during the subscription period. The payment amount may change during the subscription period and such information could be stored outside the network. However, smart contracts cannot access external data on their own. To make this happen, special applications, so-called oracles, put the necessary information on the blockchain on a regular basis or by a smart contract request.
 7.  Creating a web application. Implement a web application to demonstrate a smart contract.
 
-### Stage III. Accrual Accounting in DeFi
+### Stage III. Usecases in DeFi
 
 1.  DeFi: Concept, terminology, use cases. Develop terminology for North America and Europe in contact with accounting professionals (different approaches), and integrate them if possible. Draw up a list of banking and payment mechanisms to be implemented, at least those that are generally accepted and widely used.
 2.  Use case examples. For each use case, several popular use case examples.
