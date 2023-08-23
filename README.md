@@ -38,7 +38,7 @@ In the first stage, an algorithm for implementing the essential functions of reg
 6.  The case of a change in the payment amount during the subscription period. The payment amount may change during the subscription period and such information could be stored outside the network. However, smart contracts cannot access external data on their own. To make this happen, special applications, so-called oracles, put the necessary information on the blockchain on a regular basis or by a smart contract request.
 7.  Creating a web application. Implement a web application to demonstrate a smart contract.
 
-### Stage III. Usecases in DeFi
+### Stage III. Use cases in DeFi
 
 1.  DeFi: Concept, terminology, use cases. Develop terminology for North America and Europe in contact with accounting professionals (different approaches), and integrate them if possible. Draw up a list of banking and payment mechanisms to be implemented, at least those that are generally accepted and widely used.
 2.  Use case examples. For each use case, several popular use case examples.
