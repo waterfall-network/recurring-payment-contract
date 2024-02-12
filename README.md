@@ -23,9 +23,9 @@ In the first stage, an algorithm for implementing the essential functions of reg
 1.  Formulating an idea based on the mission of the project and the direction of its development. General knowledge of the problem. Formulation of specific goals and objectives. (completed)
 2.  Studying related works. Critical analysis of existing solutions, token standards, and review of scientific literature. (completed)
 3.  Effecting payments. The general concept, priority queue, and deferred virtual transaction. Algorithms. (completed)
-4.  Creating a Smart Contract Prototype. The proposed payment and token accounting scheme should be implemented as a smart contract running on the Ethereum network, or another system with a compatible virtual machine. (in progress)
+4.  Creating a Smart Contract Prototype. The proposed payment and token accounting scheme should be implemented as a smart contract running on the Ethereum network, or another system with a compatible virtual machine. (completed)
 5.  Publication preparation (2022). An abstract for the IEEE 1st GET Blockchain Forum, California, United States. (completed)
-6.  Publication preparation (2023). An abstract for IEEE 1st Ukrainian Distributed Ledger Technology Forum (UADLTF), Kyiv, Ukraine. (in progress)
+6.  Publication preparation (2023). An abstract for IEEE 1st Ukrainian Distributed Ledger Technology Forum (UADLTF), Kyiv, Ukraine. (completed)
 7.  Prototype testing. Test the algorithm for commission costs; compare the results with commissions without this standard. (in progress)
 
 ### Stage II. Recurring payments and subscriptions: Advanced Topics
